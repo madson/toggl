@@ -11,36 +11,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	LosAngeles = "America/Los_Angeles"
-)
-
 func TestToggl(t *testing.T) {
 	token := os.Getenv("TOGGL_TOKEN")
 	if token == "" {
 		panic("TOGGL_TOKEN not defined")
 	}
 
-	loc, _ := time.LoadLocation(LosAngeles)
+	loc, _ := time.LoadLocation("America/Los_Angeles")
 
-	t.Run("date properly encoded", func(t *testing.T) {
-		date := "2013-03-10T15:42:46+02:00"
-		expected := url.QueryEscape(date)
-		assert.Equal(t, expected, "2013-03-10T15%3A42%3A46%2B02%3A00")
-	})
-
-	t.Run("get start of the day", func(t *testing.T) {
+	t.Run("get start of the day format", func(t *testing.T) {
 		now := time.Now()
 		expected := fmt.Sprintf("%d-%02d-%02dT00:00:00-07:00", now.Year(), now.Month(), now.Day())
-		current := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc).Format(ISO8601)
-		assert.Equal(t, expected, current)
+		actual := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc).Format(ISO8601)
+		assert.Equal(t, expected, actual)
 	})
 
-	t.Run("get end of the day", func(t *testing.T) {
+	t.Run("get end of the day format", func(t *testing.T) {
 		now := time.Now()
 		expected := fmt.Sprintf("%d-%02d-%02dT23:59:59-07:00", now.Year(), now.Month(), now.Day())
-		current := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, loc).Format(ISO8601)
-		assert.Equal(t, expected, current)
+		actual := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, loc).Format(ISO8601)
+		assert.Equal(t, expected, actual)
 	})
 
 	t.Run("get toggl URL string", func(t *testing.T) {
@@ -52,6 +42,7 @@ func TestToggl(t *testing.T) {
 
 		expected := fmt.Sprintf(localURL, token, start, end)
 		actual := NewClient(token).togglURLQuery("/api/v8/time_entries", query).String()
+
 		assert.Equal(t, expected, actual)
 	})
 
@@ -66,8 +57,6 @@ func TestToggl(t *testing.T) {
 	})
 
 	t.Run("get time entries", func(t *testing.T) {
-		token := os.Getenv("TOGGL_TOKEN")
-
 		now := time.Now()
 		start := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
 		end := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, loc)
