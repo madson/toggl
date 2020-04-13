@@ -124,7 +124,7 @@ func (client *Client) AddTag(name string, workspaceID int64) (Tag, error) {
 	return result.Tag, nil
 }
 
-func (client *Client) AddEntry(entry TimeEntry) (TimeEntry, error) {
+func (client *Client) AddTimeEntry(timeEntry TimeEntry) (TimeEntry, error) {
 	var result timeEntryCreationResult
 
 	URL := client.togglURL("/api/v8/time_entries")
@@ -141,12 +141,12 @@ func (client *Client) AddEntry(entry TimeEntry) (TimeEntry, error) {
 
 	params := map[string]LocalTimeEntry{
 		"time_entry": {
-			Billable:    entry.Billable,
-			Description: fmt.Sprintf("%s (%d)", entry.Description, entry.ID),
-			Duration:    entry.Duration,
-			PID:         entry.PID,
-			Start:       entry.Start,
-			Tags:        entry.Tags,
+			Billable:    timeEntry.Billable,
+			Description: fmt.Sprintf("%s (%d)", timeEntry.Description, timeEntry.ID),
+			Duration:    timeEntry.Duration,
+			PID:         timeEntry.PID,
+			Start:       timeEntry.Start,
+			Tags:        timeEntry.Tags,
 			CreatedWith: "toggl.go",
 		},
 	}
@@ -154,7 +154,7 @@ func (client *Client) AddEntry(entry TimeEntry) (TimeEntry, error) {
 
 	resp, err := http.Post(URL.String(), "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error creating time entry: %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error creating a time entry: %s", err.Error())
 		return result.TimeEntry, err
 	}
 
