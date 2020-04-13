@@ -19,7 +19,7 @@ timeEntries, err := client.GetTimeEntries(startDate, endDate)
 
 ```go
 newTimeEntry := toggl.TimeEntry{...}
-timeEntry, err := client.AddEntry(newTimeEntry)
+timeEntry, err := client.AddTimeEntry(newTimeEntry)
 ```
 
 #### Getting tags
