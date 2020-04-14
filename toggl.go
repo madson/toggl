@@ -37,7 +37,6 @@ func (client *Client) GetTimeEntries(start, end time.Time) ([]TimeEntry, error) 
 
 	resp, err := http.Get(URL.String())
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: requesting %s: %s\n", URL.String(), err.Error())
 		fmt.Fprintf(os.Stderr, "request error while getting time entries %s: %s\n", URL.String(), err.Error())
 		return result, err
 	}
