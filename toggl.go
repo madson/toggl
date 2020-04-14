@@ -182,7 +182,7 @@ func (client *Client) AddTimeEntry(timeEntry TimeEntry) (TimeEntry, error) {
 	}{
 		"time_entry": {
 			Billable:    timeEntry.Billable,
-			Description: fmt.Sprintf("%s (%d)", timeEntry.Description, timeEntry.ID),
+			Description: timeEntry.Description,
 			Duration:    timeEntry.Duration,
 			PID:         timeEntry.PID,
 			Start:       timeEntry.Start,
