@@ -171,7 +171,7 @@ func (client *Client) AddTimeEntry(timeEntry TimeEntry) (TimeEntry, error) {
 
 	URL := client.togglURL("/api/v8/time_entries")
 
-	type LocalTimeEntry struct {
+	params := map[string]struct {
 		Billable    bool     `json:"billable"`
 		Description string   `json:"description"`
 		Duration    int64    `json:"duration"`
@@ -179,9 +179,7 @@ func (client *Client) AddTimeEntry(timeEntry TimeEntry) (TimeEntry, error) {
 		Start       string   `json:"start"`
 		Tags        []string `json:"tags"`
 		CreatedWith string   `json:"created_with"`
-	}
-
-	params := map[string]LocalTimeEntry{
+	}{
 		"time_entry": {
 			Billable:    timeEntry.Billable,
 			Description: fmt.Sprintf("%s (%d)", timeEntry.Description, timeEntry.ID),
