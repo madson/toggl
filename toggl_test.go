@@ -46,6 +46,13 @@ func TestToggl(t *testing.T) {
 		assert.Equal(t, expected, actual)
 	})
 
+	t.Run("get user's workspace list", func(t *testing.T) {
+		workspaces, err := NewClient(token).GetWorkspaces()
+
+		assert.Nil(t, err)
+		assert.NotNil(t, workspaces)
+	})
+
 	t.Run("get tags on a workspace", func(t *testing.T) {
 		workspaceIDValue := os.Getenv("TOGGL_WORKSPACE_ID")
 		workspaceID, _ := strconv.ParseInt(workspaceIDValue, 10, 64)

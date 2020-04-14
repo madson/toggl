@@ -57,6 +57,33 @@ func (client *Client) GetTimeEntries(start, end time.Time) ([]TimeEntry, error) 
 	return result, nil
 }
 
+func (client *Client) GetWorkspaces() ([]Workspace, error) {
+	var result []Workspace
+
+	URL := client.togglURL("/api/v8/workspaces")
+
+	resp, err := http.Get(URL.String())
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "request error %s: %s\n", URL.String(), err.Error())
+		return result, err
+	}
+
+	defer resp.Body.Close()
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "reading bytes error: %s\n", err.Error())
+		return result, err
+	}
+
+	err = json.Unmarshal([]byte(b), &result)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "json parse error: %s", err.Error())
+		return result, err
+	}
+
+	return result, nil
+}
+
 func (client *Client) GetTags(workspaceID int64) ([]Tag, error) {
 	var result []Tag
 
