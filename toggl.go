@@ -13,7 +13,8 @@ import (
 )
 
 const (
-	ISO8601 = "2006-01-02T15:04:05-07:00"
+	ISO8601  = "2006-01-02T15:04:05-07:00"
+	ApplJSON = "application/json"
 )
 
 type Client struct {
@@ -139,7 +140,7 @@ func (client *Client) AddTag(name string, workspaceID int64) (Tag, error) {
 	}
 	body, _ := json.Marshal(params)
 
-	resp, err := http.Post(URL.String(), "application/json", bytes.NewBuffer(body))
+	resp, err := http.Post(URL.String(), ApplJSON, bytes.NewBuffer(body))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "request error while adding a tag %s: %s\n", URL.String(), err.Error())
 		return result.Tag, err
@@ -192,7 +193,7 @@ func (client *Client) AddTimeEntry(timeEntry TimeEntry) (TimeEntry, error) {
 	}
 	body, _ := json.Marshal(params)
 
-	resp, err := http.Post(URL.String(), "application/json", bytes.NewBuffer(body))
+	resp, err := http.Post(URL.String(), ApplJSON, bytes.NewBuffer(body))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "request error while creating time entry: %s", err.Error())
 		return result.TimeEntry, err
