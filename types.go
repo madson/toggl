@@ -1,5 +1,7 @@
 package toggl
 
+import "time"
+
 type TimeEntry struct {
 	At          string   `json:"at"`
 	Billable    bool     `json:"billable"`
@@ -21,6 +23,21 @@ type Tag struct {
 	WID  int64  `json:"wid"`
 	Name string `json:"name"`
 	At   string `json:"at"`
+}
+
+type Workspace struct {
+	ID                          int       `json:"id"`
+	Name                        string    `json:"name"`
+	Premium                     bool      `json:"premium"`
+	Admin                       bool      `json:"admin"`
+	DefaultHourlyRate           int       `json:"default_hourly_rate"`
+	DefaultCurrency             string    `json:"default_currency"`
+	OnlyAdminsMayCreateProjects bool      `json:"only_admins_may_create_projects"`
+	OnlyAdminsSeeBillableRates  bool      `json:"only_admins_see_billable_rates"`
+	Rounding                    int       `json:"rounding"`
+	RoundingMinutes             int       `json:"rounding_minutes"`
+	At                          time.Time `json:"at"`
+	LogoURL                     string    `json:"logo_url,omitempty"`
 }
 
 type tagCreationResult struct {
