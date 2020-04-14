@@ -38,19 +38,25 @@ func (client *Client) GetTimeEntries(start, end time.Time) ([]TimeEntry, error) 
 	resp, err := http.Get(URL.String())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "timesync: requesting %s: %s\n", URL.String(), err.Error())
+		fmt.Fprintf(os.Stderr, "request error while getting time entries %s: %s\n", URL.String(), err.Error())
 		return result, err
 	}
 
 	defer resp.Body.Close()
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: error while reading bytes %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error while reading bytes %s", err.Error())
 		return result, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		msg := fmt.Sprintf("request error while getting time entries. statusCode %d. content: %s", resp.StatusCode, string(b))
+		return result, errors.New(msg)
 	}
 
 	err = json.Unmarshal([]byte(b), &result)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: error while parsing body %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error while parsing body %s", err.Error())
 		return result, err
 	}
 
@@ -64,20 +70,25 @@ func (client *Client) GetWorkspaces() ([]Workspace, error) {
 
 	resp, err := http.Get(URL.String())
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "request error %s: %s\n", URL.String(), err.Error())
+		fmt.Fprintf(os.Stderr, "request error while getting workspaces %s: %s\n", URL.String(), err.Error())
 		return result, err
 	}
 
 	defer resp.Body.Close()
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "reading bytes error: %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "error while reading bytes: %s\n", err.Error())
 		return result, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		msg := fmt.Sprintf("request error while getting workspaces. statusCode %d. content: %s", resp.StatusCode, string(b))
+		return result, errors.New(msg)
 	}
 
 	err = json.Unmarshal([]byte(b), &result)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "json parse error: %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error while parsing body: %s", err.Error())
 		return result, err
 	}
 
@@ -92,20 +103,25 @@ func (client *Client) GetTags(workspaceID int64) ([]Tag, error) {
 
 	resp, err := http.Get(URL.String())
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: requesting %s: %s\n", URL.String(), err.Error())
+		fmt.Fprintf(os.Stderr, "request error while getting tags %s: %s\n", URL.String(), err.Error())
 		return result, err
 	}
 
 	defer resp.Body.Close()
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: error while reading bytes %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error while reading bytes %s", err.Error())
 		return result, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		msg := fmt.Sprintf("request error while getting tags. statusCode %d. content: %s", resp.StatusCode, string(b))
+		return result, errors.New(msg)
 	}
 
 	err = json.Unmarshal([]byte(b), &result)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: error while parsing body %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error while parsing body %s", err.Error())
 		return result, err
 	}
 
@@ -126,25 +142,25 @@ func (client *Client) AddTag(name string, workspaceID int64) (Tag, error) {
 
 	resp, err := http.Post(URL.String(), "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: requesting %s: %s\n", URL.String(), err.Error())
+		fmt.Fprintf(os.Stderr, "request error while adding a tag %s: %s\n", URL.String(), err.Error())
 		return result.Tag, err
 	}
 
 	defer resp.Body.Close()
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: error while reading bytes %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error while reading bytes %s", err.Error())
 		return result.Tag, err
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		msg := fmt.Sprintf("error: StatusCode %d. Body: %s", resp.StatusCode, string(b))
+		msg := fmt.Sprintf("request error while adding a tag. statusCode %d. content: %s", resp.StatusCode, string(b))
 		return result.Tag, errors.New(msg)
 	}
 
 	err = json.Unmarshal([]byte(b), &result)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "timesync: error while parsing body %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error while parsing body %s", err.Error())
 		return result.Tag, err
 	}
 
@@ -181,19 +197,19 @@ func (client *Client) AddTimeEntry(timeEntry TimeEntry) (TimeEntry, error) {
 
 	resp, err := http.Post(URL.String(), "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error creating a time entry: %s", err.Error())
+		fmt.Fprintf(os.Stderr, "request error while creating time entry: %s", err.Error())
 		return result.TimeEntry, err
 	}
 
 	defer resp.Body.Close()
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading bytes: %s", err.Error())
+		fmt.Fprintf(os.Stderr, "error while reading bytes: %s", err.Error())
 		return result.TimeEntry, err
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		msg := fmt.Sprintf("StatusCode %d. Content: %s", resp.StatusCode, string(b))
+		msg := fmt.Sprintf("request error while creating time entry. statusCode %d. content: %s", resp.StatusCode, string(b))
 		return result.TimeEntry, errors.New(msg)
 	}
 
