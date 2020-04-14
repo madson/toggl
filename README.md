@@ -22,6 +22,12 @@ newTimeEntry := toggl.TimeEntry{...}
 timeEntry, err := client.AddTimeEntry(newTimeEntry)
 ```
 
+#### Getting workspaces list
+
+```go
+workspaces, err := client.GetWorkspaces()
+```
+
 #### Getting tags
 
 ```go
